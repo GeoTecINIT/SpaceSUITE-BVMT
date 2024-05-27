@@ -15,6 +15,8 @@ export class FileCompareService {
 
     public URL_BASE_LTB_EXPORT = 'https://eo4geo-bok-import-default-rtdb.europe-west1.firebasedatabase.app/';
 
+    public URL_BACKUP = environment.URL_BACKUP;
+
 
     public loading = true;
     public hasError = false;
@@ -52,6 +54,10 @@ export class FileCompareService {
 
     getCurrentBoK(): Observable<any> {
         return this.http.get(this.URL_BASE + 'current.json');
+    }
+
+    getBackupBok(): Observable<any> {
+        return this.http.get(this.URL_BACKUP + 'current.json');
     }
 
     getCurrentVersions(): Observable<any> {
