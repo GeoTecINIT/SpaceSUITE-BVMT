@@ -29,7 +29,7 @@ export class FileCompareService {
         removedConceptsIndex: [],
         addedConceptsIndex: [],
         noCodeConceptsIndex: [],
-        changedConceptsIndex: []
+        oldConceptsIndex: []
 
     };
 
@@ -123,7 +123,7 @@ export class FileCompareService {
             removedConceptsIndex: [],
             addedConceptsIndex: [],
             noCodeConceptsIndex: [],
-            changedConceptsIndex: []
+            oldConceptsIndex: []
         };
     }
 
@@ -165,17 +165,18 @@ export class FileCompareService {
         this.loading = true;
         this.getNewBoK().subscribe((newBoKExport) => {
 
-            this.getCurrentBoK().subscribe((currentBoK) => {
+            this.getCurrentVersions().subscribe((currentBoK) => {
 
-                this.currentBoK = currentBoK;
+                this.currentBoK = currentBoK.current;
 
-                this.comparison.current.conceptsCount = currentBoK.concepts ? currentBoK.concepts.length : 0;
-                this.comparison.current.skillsCount = currentBoK.skills ? currentBoK.skills.length : 0;
-                this.comparison.current.relationsCount = currentBoK.relations ? currentBoK.relations.length : 0;
-                this.comparison.current.externalresCount = currentBoK.references ? currentBoK.references.length : 0;
+                this.comparison.current.conceptsCount = this.currentBoK.concepts ? this.currentBoK.concepts.length : 0;
+                this.comparison.current.skillsCount = this.currentBoK.skills ? this.currentBoK.skills.length : 0;
+                this.comparison.current.relationsCount = this.currentBoK.relations ? this.currentBoK.relations.length : 0;
+                this.comparison.current.externalresCount = this.currentBoK.references ? this.currentBoK.references.length : 0;
 
 
                 if (newBoKExport) {
+                    console.log(newBoKExport)
                     this.allBoKs = newBoKExport;
 
                     this.listKeys = Object.keys(newBoKExport);
@@ -206,7 +207,7 @@ export class FileCompareService {
                         });
 
                         let allCurrentConcepts = [];
-                        currentBoK.concepts.forEach(concept => {
+                        this.currentBoK.concepts.forEach(concept => {
                             allCurrentConcepts.push(concept.code);
                         });
 
@@ -241,6 +242,20 @@ export class FileCompareService {
                             }
                         });
 
+                        // Check if the newBok contains a concept code found in older versions of the BoK
+                        const previousVersionsCodes = new Set();
+                        for (let key in currentBoK) {
+                            if (key !== 'current' && key != ("v" + this.currentBoK.version)) {
+                                currentBoK[key].concepts.forEach(concept => previousVersionsCodes.add(concept.code));
+                            }
+                        }
+                        this.currentBoK.concepts.forEach(concept => previousVersionsCodes.delete(concept.code));
+                        this.comparison.addedConceptsIndex.forEach(index => {
+                            let code = this.newBoK.concepts[index].code;
+                            if (previousVersionsCodes.has(code)) {
+                                this.comparison.oldConceptsIndex.push(index);
+                            }
+                        });
 
                         console.log(this.comparison)
 
