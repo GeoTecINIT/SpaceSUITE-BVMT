@@ -14,13 +14,13 @@ export class BokToRdf {
 
   private ttlPrefix: string = "@prefix dc: <http://purl.org/dc/elements/1.1/> .\n" + 
                               "@prefix dcterms: <http://purl.org/dc/terms/> .\n" +
-                              "@prefix eo4geo: <https://bok.eo4geo.eu/> .\n" +
+                              "@prefix geospacebok: <http://geospacebok.eu//> .\n" +
                               "@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .\n\n";
 
   private formatStatus(input: string): string {
     return input
         .replace(/<p>/g, "")
-        .replace(/<\/p>/g, "")
+        .replace(/<\/p>/g, "")  
         .replace(/"/g, "'");
   }
   
@@ -72,7 +72,7 @@ export class BokToRdf {
       contributor.concepts.forEach(conceptIndex => {
           const conceptData = graph.get(concepts[conceptIndex].code);
           if (conceptData && conceptData.contributors) {
-              conceptData.contributors.concat(newContributor.code);
+              conceptData.contributors.push(newContributor.code);
           }
       })
     });
@@ -85,7 +85,7 @@ export class BokToRdf {
       reference.concepts.forEach(conceptIndex => {
           const conceptData = graph.get(concepts[conceptIndex].code);
           if (conceptData && conceptData.references) {
-              conceptData.references.concat(newReference.code);
+              conceptData.references.push(newReference.code);
           }
       })
     });
@@ -98,7 +98,7 @@ export class BokToRdf {
       skill.concepts.forEach(conceptIndex => {
           const conceptData = graph.get(concepts[conceptIndex].code);
           if (conceptData && conceptData.skills) {
-              conceptData.skills.concat(newSkill.code);
+              conceptData.skills.push(newSkill.code);
           }
       })
     });

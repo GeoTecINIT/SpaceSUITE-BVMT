@@ -10,7 +10,7 @@ export class Skill implements TTL{
     }
 
     ToTTL(): string {
-        return   "eo4geo:" + this.code + " a dcterms:Subject ;\n" + 
+        return   "geospacebok:" + this.code + " a dcterms:Subject ;\n" + 
                  "    dc:title \"" + this.name + "\" ;\n" + 
                  ".\n\n";
      }

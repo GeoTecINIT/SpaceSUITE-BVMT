@@ -24,7 +24,7 @@ export class TreeNode implements TTL {
     }
 
     ToTTL(): string {
-        let ttlConcept: string =  "eo4geo:" + this.code + " a rdfs:Resource ;\n" + 
+        let ttlConcept: string =  "geospacebok:" + this.code + " a rdfs:Resource ;\n" + 
                                     "    dc:title \"" + this.name + "\" ;\n" + 
                                     "    dc:description \"" + this.description + "\";\n";
         this.relations.forEach(relation => {
@@ -46,16 +46,16 @@ export class TreeNode implements TTL {
                     ttlRelation = "isRequiredBy";
                     break;
             }
-            ttlConcept += "    dcterms:" + ttlRelation + " eo4geo:" + relation.target + " ;\n"
+            ttlConcept += "    dcterms:" + ttlRelation + " geospacebok:" + relation.target + " ;\n"
         })
         this.contributors.forEach(contributor => {
-            ttlConcept += "    dc:contributor eo4geo:" + contributor + " ;\n"
+            ttlConcept += "    dc:contributor geospacebok:" + contributor + " ;\n"
         })
         this.skills.forEach(skill => {
-            ttlConcept += "    dc:subject eo4geo:" + skill + " ;\n"
+            ttlConcept += "    dc:subject geospacebok:" + skill + " ;\n"
         })
         this.references.forEach(reference => {
-            ttlConcept += "    dc:source eo4geo:" + reference + " ;\n"
+            ttlConcept += "    dc:source geospacebok:" + reference + " ;\n"
         })
         ttlConcept += ".\n\n";
         return ttlConcept;
