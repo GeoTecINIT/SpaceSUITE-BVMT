@@ -1,0 +1,69 @@
+<app-header class="nav-bar-eo4geo" [navbarBrandRouterLink]="['/manage']" [fixed]="true" [navbarBrandFull]="{
+  src: 'assets/img/brand/icon-inline.svg',
+  width: 255,
+  height: 45,
+  alt: 'eo4geo logo'
+}" [sidebarToggler]="false" [mobileSidebarToggler]="false" [mobileAsideMenuToggler]="false"
+[asideMenuToggler]="false">
+<!--   <ul class="nav navbar-nav d-md-down-none">
+  <li class="nav-item px-3">
+    <a class="nav-link" href="#">Home</a>
+    <a class="nav-link" routerLink="/list" routerLinkActive="active" href="#">List</a>
+  </li>
+</ul> -->
+</app-header>
+<div class="app-body">
+<main class="main d-flex align-items-center">
+  <div class="container">
+    <div class="row">
+      <img class="d-sm-down-none" style="margin: auto;" src="assets/img/brand/icon-square.png" />
+      <div class="col-md-8 mx-auto">
+        <div class="card-group">
+          <div class="card card-accent-secondary p-4">
+            <div class="card-body">
+              <form>
+                <h1>Login</h1>
+                <p class="text-muted">Sign In to your account</p>
+                <div class="input-group mb-3">
+                  <div class="input-group-prepend">
+                    <span class="input-group-text"><i class="icon-user"></i></span>
+                  </div>
+                  <input type="text" class="form-control" placeholder="Email" name="email" required
+                    [(ngModel)]="email">
+                </div>
+                <div class="input-group mb-4">
+                  <div class="input-group-prepend">
+                    <span class="input-group-text"><i class="icon-lock"></i></span>
+                  </div>
+                  <input type="password" class="form-control" placeholder="Password" name="pwd" required
+                    [(ngModel)]="pwd">
+                </div>
+                <div class="row">
+                  <div class="col-6">
+                    <button type="button" class="btn btn-primary px-4" (click)="login()">Login</button>
+                  </div>
+                  <div class="col-6 text-right">
+                    <button type="button" class="btn btn-link px-0" (click)="forgotPwd()">Forgot password?</button>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-12">
+                    <p class="text-center text-danger mt-4" [innerText]="errorLogin" [hidden]="!errorLogin"></p>
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+</div>
+<app-footer class="footer-eo4geo">
+  <span><a href="http://www.eo4geo.eu/tools" target="_blank" class="btn btn-light-primary">EO4GEO BoK Tools</a></span>
+  <span class="ml-auto">
+    <a href="mailto:eo4geo@gmail.com?subject=EO4GEO Tools Contact" class="btn"> Contact</a>
+  </span>
+</app-footer>
