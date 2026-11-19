@@ -1,9 +1,8 @@
-import { HttpClient, HttpHeaders } from "@angular/common/http";
+import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
-import { FileUploadServiceService } from "./fileUploadService.service";
 import { environment } from "../../environments/environment";
-import { forkJoin, Observable, of } from "rxjs";
-import { catchError, map, switchMap } from "rxjs/operators";
+import { Observable } from "rxjs";
+import { switchMap } from "rxjs/operators";
 
 @Injectable ({
     providedIn: "root"
@@ -149,6 +148,23 @@ export class ApiUpdateService {
     if (version.skills) {
       version.skills.forEach(r => {
         fileToSave.skills.push({
+          bloomLevel: null,
+          name: r.name,
+          concepts: []
+        });
+
+        r.concepts.forEach(c => {
+          if (codeNameHash[c] && codeNameHash[c] !== '') {
+            fileToSave.concepts[codeNameHash[c]].skills.push(r.name);
+            fileToSave.skills[fileToSave.skills.length - 1].concepts.push(codeNameHash[c]);
+          }
+        });
+      });
+    }
+    if (version.classifiedSkills && Array.isArray(version.classifiedSkills)) {
+      version.classifiedSkills.forEach(r => {
+        fileToSave.skills.push({
+          bloomLevel: r.bloomLevel,
           name: r.name,
           concepts: []
         });

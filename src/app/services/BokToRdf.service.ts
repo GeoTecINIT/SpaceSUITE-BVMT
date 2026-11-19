@@ -117,11 +117,13 @@ export class BokToRdf {
     const contributors: any[] = bok.contributors;
     const references: any[] = bok.references;
     const skills: any[] = bok.skills;
+    const classifiedSkills: any[] = bok.classifiedSkills;
 
     if (concepts && relations) this.fillGraph(concepts, relations, graph);
     if (contributors) this.fillContributors(contributors, concepts, graph, contributorArray);
     if (references) this.fillReferences(references, concepts, graph, referenceArray);
     if (skills) this.fillSkills(skills, concepts, graph, skillArray);
+    if (classifiedSkills) this.fillSkills(classifiedSkills, concepts, graph, skillArray);
     
     return  {
               graph: graph,

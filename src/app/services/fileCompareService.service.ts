@@ -4,6 +4,7 @@ import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { HttpHeaders } from '@angular/common/http';
 import { catchError } from 'rxjs/operators';
 import { formatDate } from '@angular/common';
+import { environment } from '../../environments/environment';
 
 @Injectable({
     providedIn: 'root'
@@ -169,6 +170,7 @@ export class FileCompareService {
 
                 this.comparison.current.conceptsCount = this.currentBoK.concepts ? this.currentBoK.concepts.length : 0;
                 this.comparison.current.skillsCount = this.currentBoK.skills ? this.currentBoK.skills.length : 0;
+                this.comparison.current.skillsCount += this.currentBoK.classifiedSkills ? this.currentBoK.classifiedSkills.length : 0;
                 this.comparison.current.relationsCount = this.currentBoK.relations ? this.currentBoK.relations.length : 0;
                 this.comparison.current.externalresCount = this.currentBoK.references ? this.currentBoK.references.length : 0;
 
@@ -193,6 +195,7 @@ export class FileCompareService {
 
                         this.comparison.new.conceptsCount = newBoK.concepts ? newBoK.concepts.length : 0;
                         this.comparison.new.skillsCount = newBoK.skills ? newBoK.skills.length : 0;
+                        this.comparison.new.skillsCount += newBoK.classifiedSkills ? newBoK.classifiedSkills.length : 0;
                         this.comparison.new.relationsCount = newBoK.relations ? newBoK.relations.length : 0;
                         this.comparison.new.externalresCount = newBoK.references ? newBoK.references.length : 0;
 
@@ -289,30 +292,92 @@ export class FileCompareService {
     }
 
     convertExportJSON(obj: any): any {
-        const fileToSave = { 'concepts': [], 'relations': [], 'references': [], 'skills': [], 'contributors': [] };
+        const fileToSave = { 'concepts': [], 'relations': [], 'references': [], 'classifiedSkills': [], 'skills': [], 'contributors': [] };
         let gistNode = 0;
         if (obj.hasOwnProperty('nodes')) {
         fileToSave.concepts[0] = {};
         Object.keys(obj['nodes']).forEach(k => {
             if (obj['nodes'][k].label === '[GIST] Geographic Information Science and Technology' && obj['nodes'][k].numberOfLinks > 0) {
-            fileToSave.concepts[0] = {
-                'code': obj['nodes'][k].label.split(']', 1)[0].split('[', 2)[1],
-                'name': obj['nodes'][k].label.split(']')[1].trim(),
-                'description': obj['nodes'][k].definition
-            };
-            gistNode = Number(k);
+                fileToSave.concepts[0] = {
+                    'code': obj['nodes'][k].label.split(']', 1)[0].split('[', 2)[1],
+                    'name': obj['nodes'][k].label.split(']')[1].trim(),
+                    'description': obj['nodes'][k].definition
+                };
+                gistNode = Number(k);
+
+                if (obj['nodes'][k].classifiedSkills) {
+                    const bloomLevels = {
+                        remember: 1,
+                        understand: 2,
+                        apply: 3,
+                        analyse: 4,
+                        evaluate: 5,
+                        create: 6
+                    };
+
+                    const classifiedSkills: {
+                        concepts: number[];
+                        bloomLevel: any;
+                        bloomVerb: string;
+                        name: unknown;
+                    }[]  = [];
+
+                    // TODO - fix index issues
+                    Object.entries(obj['nodes'][k].classifiedSkills).forEach(
+                    ([bloomVerb, verbs]) =>
+                        Object.entries(verbs).forEach(([verb, name]) => classifiedSkills.push({
+                            concepts: [0],
+                            bloomLevel: bloomLevels[bloomVerb],
+                            bloomVerb: verb,
+                            name
+                        }))
+                    );
+                    
+                    fileToSave.classifiedSkills = fileToSave.classifiedSkills.concat(classifiedSkills);
+                }
             } else {
-            fileToSave.concepts.push({
-                'code': (obj['nodes'][k].label.split(']', 1)[0].split('[', 2)[1] != null &&
-                obj['nodes'][k].label.split(']', 1)[0].split('[', 2)[1].length > 0) ?
-                obj['nodes'][k].label.split(']', 1)[0].split('[', 2)[1] : ' ',
-                'name': (obj['nodes'][k].label.split(']')[1] != null && obj['nodes'][k].label.split(']')[1].length > 0) ?
-                obj['nodes'][k].label.split(']')[1].trim() : ' ',
-                'description': (obj['nodes'][k].definition != null && obj['nodes'][k].definition.length > 0) ?
-                obj['nodes'][k].definition : ' ',
-                'selfAssesment': (obj['nodes'][k].selfAssessment != null && obj['nodes'][k].selfAssessment.length > 0) ?
-                obj['nodes'][k].selfAssessment : ' '
-            });
+                fileToSave.concepts.push({
+                    'code': (obj['nodes'][k].label.split(']', 1)[0].split('[', 2)[1] != null &&
+                    obj['nodes'][k].label.split(']', 1)[0].split('[', 2)[1].length > 0) ?
+                    obj['nodes'][k].label.split(']', 1)[0].split('[', 2)[1] : ' ',
+                    'name': (obj['nodes'][k].label.split(']')[1] != null && obj['nodes'][k].label.split(']')[1].length > 0) ?
+                    obj['nodes'][k].label.split(']')[1].trim() : ' ',
+                    'description': (obj['nodes'][k].definition != null && obj['nodes'][k].definition.length > 0) ?
+                    obj['nodes'][k].definition : ' ',
+                    'selfAssesment': (obj['nodes'][k].selfAssessment != null && obj['nodes'][k].selfAssessment.length > 0) ?
+                    obj['nodes'][k].selfAssessment : ' '
+                });
+
+                if (obj['nodes'][k].classifiedSkills) {
+                    const bloomLevels = {
+                        remember: 1,
+                        understand: 2,
+                        apply: 3,
+                        analyse: 4,
+                        evaluate: 5,
+                        create: 6
+                    };
+
+                    const classifiedSkills: {
+                        concepts: number[];
+                        bloomLevel: any;
+                        bloomVerb: string;
+                        name: unknown;
+                    }[]  = [];
+
+                    // TODO - fix index issues
+                    Object.entries(obj['nodes'][k].classifiedSkills).forEach(
+                    ([bloomVerb, verbs]) =>
+                        Object.entries(verbs).forEach(([verb, name]) => classifiedSkills.push({
+                            concepts: [fileToSave.concepts.length - 1],
+                            bloomLevel: bloomLevels[bloomVerb],
+                            bloomVerb: verb,
+                            name
+                        }))
+                    );
+                    
+                    fileToSave.classifiedSkills = fileToSave.classifiedSkills.concat(classifiedSkills);
+                }
             }
         });
         } else {
@@ -388,7 +453,7 @@ export class FileCompareService {
                 });
                 fileToSave.references.push({
                     'concepts': nodeToAdd.length > 0 ? nodeToAdd : ' ',
-                    'name': obj['externalResources'][k].title.length > 0 ? obj['externalResources'][k].title : ' ',
+                    'name': obj['externalResources'][k].title && obj['externalResources'][k].title.length > 0 ? obj['externalResources'][k].title : ' ',
                     'description': (obj['externalResources'][k].description && obj['externalResources'][k].description.length > 0) ? obj['externalResources'][k].description : ' ',
                     'url': (obj['externalResources'][k].url && obj['externalResources'][k].url.length > 0) ?
                     obj['externalResources'][k].url : ' '

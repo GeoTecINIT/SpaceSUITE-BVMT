@@ -95,6 +95,7 @@ export class CurrentVersionComponent implements OnInit {
         this.currentBokData.updateDate = currentBoK.updateDate ? currentBoK.updateDate : "";
         this.currentBokData.conceptsCount = currentBoK.concepts ? currentBoK.concepts.length : 0;
         this.currentBokData.skillsCount = currentBoK.skills ? currentBoK.skills.length : 0;
+        this.currentBokData.skillsCount += currentBoK.classifiedSkills ? currentBoK.classifiedSkills.length : 0;
         this.currentBokData.relationsCount = currentBoK.relations ? currentBoK.relations.length : 0;
         this.currentBokData.externalresCount = currentBoK.references ? currentBoK.references.length : 0;
       })
@@ -106,6 +107,7 @@ export class CurrentVersionComponent implements OnInit {
         this.backupBokData.updateDate = backupBok.updateDate ? backupBok.updateDate : "";
         this.backupBokData.conceptsCount = backupBok.concepts ? backupBok.concepts.length : 0;
         this.backupBokData.skillsCount = backupBok.skills ? backupBok.skills.length : 0;
+        this.backupBokData.skillsCount += backupBok.classifiedSkills ? backupBok.classifiedSkills.length : 0;
         this.backupBokData.relationsCount = backupBok.relations ? backupBok.relations.length : 0;
         this.backupBokData.externalresCount = backupBok.references ? backupBok.references.length : 0;
       })
